@@ -30,14 +30,14 @@ namespace ThermalTalk
 
     internal class NativeMethods
     {  // Structure and API declarions:
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
         internal class DOCINFOA
         {
-            [MarshalAs(UnmanagedType.LPWStr)]
+            [MarshalAs(UnmanagedType.LPStr)]
             public string pDocName;
-            [MarshalAs(UnmanagedType.LPWStr)]
+            [MarshalAs(UnmanagedType.LPStr)]
             public string pOutputFile;
-            [MarshalAs(UnmanagedType.LPWStr)]
+            [MarshalAs(UnmanagedType.LPStr)]
             public string pDataType;
         }
 
@@ -59,8 +59,8 @@ namespace ThermalTalk
         /// <param name="hPrinter"></param>
         /// <param name="pd"></param>
         /// <returns></returns>
-        [DllImport("winspool.Drv", EntryPoint = "OpenPrinterA", SetLastError = true, CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
-        internal static extern bool OpenPrinter([MarshalAs(UnmanagedType.LPWStr)] string szPrinter, out IntPtr hPrinter, IntPtr pd);
+        [DllImport("winspool.Drv", EntryPoint = "OpenPrinterA", SetLastError = true, CharSet = CharSet.Ansi, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
+        internal static extern bool OpenPrinter([MarshalAs(UnmanagedType.LPStr)] string szPrinter, out IntPtr hPrinter, IntPtr pd);
 
         /// <summary>
         /// http://www.pinvoke.net/default.aspx/winspool.OpenPrinter
