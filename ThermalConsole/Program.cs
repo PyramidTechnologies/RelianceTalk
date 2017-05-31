@@ -62,6 +62,7 @@ namespace ThermalConsole
                 return;
             }
 
+            // Setup options for printing
             Opts opts = null;
             try
             {
@@ -77,6 +78,7 @@ namespace ThermalConsole
                 };
 
                 // Find where the counter should go. 3 in row of 0xBB
+                // We find and mark the 0xBB, 0xBB, 0xBB index as the place to inject our ticket counter
                 int index = 0;
                 foreach(var b in raw)
                 {
@@ -88,6 +90,7 @@ namespace ThermalConsole
                     break;
                 }
 
+                // Don't let them print faster than every 10 seconds
                 if(opts.SecondsDelay < 7)
                 {
                     Console.WriteLine("Minimum delay is 7 seconds, setting to minimum");
@@ -102,6 +105,10 @@ namespace ThermalConsole
                 return;
             }
 
+
+            Console.WriteLine("Starting test operation: {0}", opts.ToString());
+
+            // Assume COMXX is a serial port, treat all else as a printer
             if (uuid.StartsWith("COM", StringComparison.CurrentCultureIgnoreCase))
             {
                 SerialPrintMode(opts);
@@ -112,6 +119,9 @@ namespace ThermalConsole
             }
         }
 
+        /// <summary>
+        /// Print the usage info
+        /// </summary>
         private static void PrintBadArgs()
         {
             Console.WriteLine("ThermalConsole  © Pyramid Technologies Inc. 2017");
@@ -123,6 +133,10 @@ namespace ThermalConsole
             Console.WriteLine("optional_repeat_count is the optional number of times to print the receipt. omit to print forever.");
         }
 
+        /// <summary>
+        /// Print data using DeviceID as a com port identifier
+        /// </summary>
+        /// <param name="opts"></param>
         private static void SerialPrintMode(Opts opts)
         {
             // TODO make baud rate configurable
@@ -172,6 +186,10 @@ namespace ThermalConsole
             }
         }
 
+        /// <summary>
+        /// Print data using DeviceID as a window printer identifier.
+        /// </summary>
+        /// <param name="opts"></param>
         private static void WindowsPrintMode(Opts opts)
         {
             // Gotta get a pointer on the local heap. Fun fact, the naming suggests that
@@ -185,6 +203,11 @@ namespace ThermalConsole
                 while (opts.RepeatCount == -1 || --opts.RepeatCount > 0)
                 {
                     bool result = RawPrinterHelper.SendBytesToPrinter(opts.DeviceId, ptr, opts.Data.Length);
+                    if(!result)
+                    {
+                        Console.WriteLine("Failed to write to Windows Printer. Check printer name");
+                        return;
+                    }
                     Thread.Sleep(opts.SecondsDelay * 1000);
                 }          
             }
@@ -196,7 +219,7 @@ namespace ThermalConsole
             {
                 Marshal.FreeHGlobal(ptr);
             }
-        }
+        }  
     }
 
     class Opts

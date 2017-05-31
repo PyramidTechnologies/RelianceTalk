@@ -57,9 +57,10 @@ namespace ThermalTalk
 
             di.pDocName = "ESCPOSTTester";
             di.pDataType = "RAW";
+            var normalized = szPrinterName.Normalize();
 
             // Open the printer.
-            if (NativeMethods.OpenPrinter(szPrinterName.Normalize(), out hPrinter, IntPtr.Zero))
+            if (NativeMethods.OpenPrinter(normalized, out hPrinter, IntPtr.Zero))
             {
                 // Start a document.
                 if (NativeMethods.StartDocPrinter(hPrinter, 1, di))
